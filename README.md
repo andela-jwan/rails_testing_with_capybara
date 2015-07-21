@@ -659,5 +659,14 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
     Run our tests. Our tests now pass. That's how you TDD with Capybara.
 
 
+#### Recap
+
+    We learned how to:
+    1) Start with a Capybara feature/integration test to drive our development.
+    2) Drop down to lower level tests when we encounter small problems in our high-level test. In this instance, we needed to create models and associations, both of which required their own tests before we could continue our high-level test.
+    3) Create models using generators, and validations.
+    4) Use RSpec
+
+    
     If there are any bugs to this tutorial, feel free to contact:
     [Jeffrey Wan](https://www.linkedin.com/pub/jeffrey-wan/18/23/a1b)
