@@ -24,29 +24,29 @@ Feature tests:
 
 From the thoughtbot guide:  
 
-    [Thoughtbot on Integration Testing](https://robots.thoughtbot.com/rspec-integration-tests-with-capybara)  
-    > When writing integration tests, try to model the test around an actor (user of the system) and the
-    action they are performing.
+[Thoughtbot on Integration Testing](https://robots.thoughtbot.com/rspec-integration-tests-with-capybara)  
 
-    Here is an example RSpec feature test:
+> When writing integration tests, try to model the test around an actor (user of the system) and the
+action they are performing.
 
-    ```rubyonrails
-     # spec/features/user_creates_a_foobar_spec.rb
+Here is an example RSpec feature test:
 
-      feature 'User creates a foobar' do
-        scenario 'they see the foobar on the page' do
-          visit new_foobar_path
+```rubyonrails
+ # spec/features/user_creates_a_foobar_spec.rb
 
-          fill_in 'Name', with: 'My foobar'
-          click_button 'Create Foobar'
+  feature 'User creates a foobar' do
+    scenario 'they see the foobar on the page' do
+      visit new_foobar_path
 
-          expect(page).to have_css '.foobar-name', 'My foobar'
-        end
-      end
-    ```
+      fill_in 'Name', with: 'My foobar'
+      click_button 'Create Foobar'
 
-This test emulates a user visiting the new foobar form, filling it in, and clicking “Create Foorbar”. The test
-then asserts that the page has the text of the created foobar where it expects it to be.
+      expect(page).to have_css '.foobar-name', 'My foobar'
+    end
+  end
+```
+
+What is this test doing? Well read it slowly and you'll realize it makes sense. The test emulates a user visiting the new foobar form, filling it in, and clicking “Create Foorbar”. The test then asserts that the page has the text of the created foobar where it expects it to be.
 
 We'll be using Capybara to create our integration/feature tests. Read about it here:
 
@@ -110,9 +110,9 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
     rails g rspec:feature vendors
     ```
 
-    This test is our first high-level test that will guide our user-interactions on this app. As we will see, these high-level tests sometimes will require a lot time to get through since it will likely require us to drop down to a lower-level and develop models, all of which will need their own tests.
+    This command creates an rspec test in our spec/features folder. Take a look at it and notice the type: :feature at the top. This test is our first high-level test that will guide our user-interactions on this app. As we will see, these high-level tests sometimes will require a lot time to get through since it will likely require us to drop down to a lower-level and develop models, all of which will need their own tests.
 
-    This will be our test in spec/features/vendors_spec.rb
+    Let's write our test. Write this test in spec/features/vendor_spec.rb
 
     ```rubyonrails
     require 'rails_helper'
@@ -134,9 +134,9 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
     end
     ```
 
-    To sum up our test in English... if there are 3 vendors in our test database and a user visits the vendors_path or vendors/index page, the page will have content "jeff", it will have content "nad", and it will have content "nad", and it will also have 3 <p> tags with the class vendor. It will also have an h1 tag with the text: "Vendors And Their Suyas". I like using have_selector when I want to be more specific where certain text lies on the page or if I want to simply count the number of selectors present.
+    To sum up our test in English... if there are 3 vendors in our test database and a user visits the vendors_path or vendors/index page, the page will have content "jeff", it will have content "ikem", and it will have content "nad", and it will also have 3 p tags with the class vendor. It will also have an h1 tag with the text: "Vendors And Their Suyas". I like using have_selector when I want to be more specific where certain text lies on the page or if I want to simply count the number of selectors present.
 
-3. Let's run our tests and get them to pass: (From here on our, that means to type the following in terminal)
+3. Let's run our tests and get them to pass: (From here on our, "running our tests" or "rerun our tests" means to type the following in terminal.)
 
     ```Bash
     bundle exec rspec
@@ -152,7 +152,7 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
      # ./spec/features/vendors_spec.rb:5:in `block (2 levels) in <top (required)>'
     ```
 
-    Our test is telling us that we do not have a class Vendor. The class is our constant. So, we need to create a Vendor class. Let's also create a name for our Vendor class. But first, in the true spirit of BDD and TDD, let's create a test for this model that we're about to create.
+    Our test is telling us that we do not have a class Vendor. The class is our constant. So, we need to create a Vendor class. Let's also create a name attribute for our Vendor class. But first, in the true spirit of BDD and TDD, let's create a test for this model that we're about to create.
 
     ```Bash
     rails g rspec:model Vendor
@@ -173,7 +173,7 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
     rails g model Vendor name:string
     ```
 
-    Then migrate our database (from here on our, that means to run this command:)
+    Then migrate our database (since that generator creates a migration. From here on out, migrating means to run this command:)
 
     ```Bash
     rake db:migrate
@@ -183,16 +183,18 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
 
     ```Bash
     Vendors the vendors index page can show all of the vendors
-     Failure/Error: visit vendors_path
-     NameError:
-       undefined local variable or method `vendors_path' for #<RSpec::ExampleGroups::Vendors:0x007fabddbbcb60>
+      Failure/Error: visit vendors_path
+      NameError:
+        undefined local variable or method `vendors_path' for #<RSpec::ExampleGroups::Vendors:0x007fabddbbcb60>
      # ./spec/features/vendors_spec.rb:9:in `block (2 levels) in <top (required)>'
     ```
 
-    So now let's follow our error message and create the path variable vendors_path.
+    So now let's follow our error message and create the path variable vendors_path in our config/routes.rb file. All of our routes should be defined here.
 
     ```rubyonrails
-    get '/vendors', to: 'vendors#index', as: 'vendors'
+    Rails.application.routes.draw do
+      get '/vendors', to: 'vendors#index', as: 'vendors'
+    end
     ```
 
     This above code means that anytime we visit the /vendors url, the controller action that will be hit will be vendors#index and the name of this path is vendors_path. The as: option tells us we can refer to this path internally with vendors_path which when called, will hit vendors#index in the controller.
@@ -200,6 +202,14 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
     Read more about the as: option here:
     [:as option in routes](http://guides.rubyonrails.org/routing.html#naming-routes)
 
+    If you want to see your routes, type this in terminal:
+
+    ```Bash
+    rake routes
+    ```
+    Read your terminal output.
+
+    The prefix column is what you prepend to \_path to obtain your path variable.
     Rerun the tests and this should be your next error:
 
     ```Bash
@@ -209,11 +219,13 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
        uninitialized constant VendorsController
     ```
 
-    No Vendors controller huh? Let's fix by typing this in terminal:
+    The above states that the failure/error occurs on visit vendors_path. There's an error. No Vendors controller huh? Let's fix by typing this in terminal:
 
     ```Bash
     rails g controller Vendors index
     ```
+
+    The above code uses a Rails generator to create a Vendors controller with an index action.
 
     Rerun our tests and this should be your next error:
 
@@ -243,7 +255,7 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
     end
     ```
 
-    The code inside the index method gets all the vendors and assigns them to @vendors which the view will have access to.
+    The code inside the index method gets all the vendors and assigns them to @vendors which the view will have access to. How does the html.erb view have access to the controller's instance variable? What magic is that? Google that question but here's the best response I found:
     > The explanation is that @title is an instance variable and title is a local variable and rails makes instance variables from controllers available to views. This happens because the template code (erb, haml, etc) is executed within the scope of the current controller instance.
 
     If you want to better understand what views Rails renders after a controller action, read this:  
@@ -261,21 +273,26 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
         <% end %>
       </div>
     ```
-    Rerun your tests and now all tests should now pass. IF you want, change your first expectation in the feature test to be
+    Rerun your tests and now all tests should now pass. Hurray!
+
+    If you want to see Rspec error messages, change your first expectation in the feature test and singularize "Vendors" to create a failure:
 
     ```rubyonrails
     expect(page).to have_selector("h1", text: "Vendors And Their Suyas")
     ```
+
+    Rerun your tests and you should see:
 
     ```Bash
     Failure/Error: expect(page).to have_selector("h1", text: "Vendor And Their Suyas")
        expected to find css "h1" with text "Vendor And Their Suyas" but there were no matches. Also found "Vendors And Their Suyas", which matched the selector but not all filters.
     ```
 
-    which is a very descriptive error message.
+    which is a very descriptive error message!  
+
     If you have any pending view or helper tests, feel free to delete that code.
 
-4. Let's write another feature test with capybara.
+4. Let's write another feature test with capybara inside your spec/features/vendors_spec.rb
 
     ```rubyonrails
     scenario "the vendors index page can show the vendors' suyas" do
@@ -299,9 +316,11 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
     end
     ```
 
-    So this test does a lot of interesting things for us. First, it's the first time that we define a Suya model. We still do not have a Suya model or Vendor-to-Suya association. But this test is where we decide that we should have an association between Vendors and suyas. This will require us to drop down and write a lower level unit/model test for Suya and Vendors.
+    So writing this test first in the spirit of TDD does a lot of interesting things for us. First, it's the first time that we define a Suya model. We still do not have a Suya model or Vendor-to-Suya association. But this test is where we decide that we should have an association between Vendors and suyas. I like calling TDD dream-testing. It allows you to write what your dream version or ideal version of this app should be. Since the tests are often more abstract and high level, we can do a lot of our app-planning while writing the test.
 
-    In addition to driving our development in our models and association, this test also further drives our main index.html.erb view. We decide in our test that there should be some kind of breakdown of our view that separates the different vendors into different segments of the page. In our test, we also decide that the suyas should be listed as list items with a class of "suyas".
+    The setup of this feature/integration test requires us to create an association (vendor has many suyas). This will require us to drop down and write a lower level unit/model test for Suya and Vendors.
+
+    In addition to driving our development in our models and association, this test also further drives our main index.html.erb view. We also decide in our test that there should be some kind of breakdown of our view that separates the different vendors into different segments of the page. In our test, we also decide that the suyas should be listed as list items with a class of "suyas".
 
 5. Let's start getting these tests to pass.
 
@@ -315,7 +334,7 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
 
     So, let's create a Suya model where a suya belongs to a Vendor and a Vendor has_many suyas.
 
-    Before we create the model, let's drop down a level and create a unit test for vendors.
+    Before we create the model, let's drop down a level and create a unit test for Suya.
 
     ```Bash
     rails g rspec:model Suya
@@ -364,13 +383,13 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
       unknown attribute 'meat' for Suya.
     ```
 
-    So let's create a migration with a special kind of helper migration that automatically adds the add_column command:
+    So our test fails because we cannot create a Suya with a "meat" attribute. We need to create a meat attribute using a migration. So let's create a migration with a special kind of helper migration that automatically adds the add_column command in the migration.
 
     ```Bash
     rails g migration AddMeatToSuyas meat:string
     ```
 
-    Our migration should look like:
+    Our last migration inside db/migrate should look like:
 
     ```rubyonrails
     class AddMeatToSuyas < ActiveRecord::Migration
@@ -467,7 +486,7 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
 
     Re-migrate. You know how.
 
-    Rerun your tests. You should now have two errors still from vendors_spec.rb and two errors from suya_spec.rb. This is one of the errors:
+    Rerun your tests. You should now have an error from our feature/integration test and two errors from suya_spec.rb. Let's fix the suya_spec errors first. This is one of the errors from suya_spec.rb
 
     ```Bash
     Suya is invalid without spicy which is a boolean
@@ -475,7 +494,7 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
        expected `#<Suya id: 1, created_at: "2015-07-21 09:38:14", updated_at: "2015-07-21 09:38:14", meat: "beef", spicy: nil, price: nil>.invalid?` to return true, got false
     ```
 
-    So in our test, suya1 is not invalid since we We can fix that by adding a validation to our Suya model. Let's add this line:
+    So in our test, suya1 is not invalid since we did not say that a nil value in the spicy column was not allowed. Therefore, the suya1 object is valid still and therefore the test fails since we're testing for invalidness. We can fix that by adding a validation to our Suya model. Let's add this line:
 
     ```rubyonrails
     validates :spicy, inclusion: [true, false]
@@ -500,7 +519,7 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
     validates :price, numericality: true
     ```
 
-    But now we have two errors again in suya_spec.rb! This is because our other test which tested the spicy column did not include prices that were numbers. We need to fix those later. For now let's focus on the test which tests the price column.
+    But now we have two errors again in suya_spec.rb! This is because our other tests which tested the spicy column did not include prices that were numbers. We need to fix those later. For now let's focus on the test which tests the price column.
 
     Rerun our tests and this should be our error:
 
@@ -511,13 +530,13 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
        Failed assertion, no message given.
     ```
 
-    We can fix that by changing our model validation to this:
+    suya2 has a price which is a float. Our validation still allows for floats which we do not want. We can fix that by changing our model validation to this:
 
     ```rubyonrails
     validates :price, numericality: { only_integer: true }
     ```
 
-    This should fix our tests. Rerun it and you should see that test of the price column now passes. Even suya4 which has price as nil should pass and be invalid since nil is not an integer number.
+    This should fix our tests and now suya2 is invalid which passes our test. Rerun our tests and you should see that test of the price column now passes. Even suya4 which has price as nil should pass and be invalid since nil is not an integer number.
 
     We can fix our other tests for the spicy column easily by just changing the suya objects to include a valid price.
 
@@ -622,7 +641,7 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
        expected to find css "li.suyas" 2 times but there were no matches
     ```
 
-    The setup of our feature test where we setup associations:
+    So if you were paying attention, the setup of our feature test where we setup associations seemed to have advanced on its own. Why? Well, it's because we now are passing through the setup of our feature test without problem. This is the setup of our feature test:
 
     ```rubyonrails
     jeff = Vendor.create(name: "jeff")
@@ -634,7 +653,7 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
     ikem.suyas << Suya.create(meat: "ram", spicy: false, price: 220)
     ```
 
-    is now not a problem because we took care of that when fixing our model tests. Remember, we encountered this association problem in our high level test, which caused us to drop down to our models which we wrote model/unit tests for and by passing them... we created associations between our vendor and suya models.
+    This is now not a problem because we took care of that when fixing our model tests. Remember, we encountered this association problem in our high level test, which caused us to drop down to our models which we wrote model/unit tests for and by passing them... we created associations between our vendor and suya models.
 
     Now we just have to create html list items. No problem.
 
@@ -659,13 +678,70 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
     Run our tests. Our tests now pass. That's how you TDD with Capybara.
 
 
+#### Exploring Launchy Gem
+
+Let's take a quick look at our app during our tests. We can do that by adding the launchy gem. This helps if you ever have bugs while running integration tests and you want to see what your DOM actually looks like during your tests.
+
+>it will launch an unstyled instance of the specific page. It can be especially useful when debugging errors in integration tests.
+
+Add this gem to your Gemfile:
+
+    ```Bash
+    gem 'launchy'
+    ```
+
+    Our Gemfile development/test section now looks like:
+
+    ```Bash
+    group :development, :test do
+      gem 'pry'
+      gem 'web-console', '~> 2.0'
+      gem 'spring'
+      gem 'rspec-rails'
+      gem 'capybara'
+      gem 'launchy'
+    end
+    ```
+
+    In our spec/features/vendors_spec file, add a save_and_open_page (A capybara method that relies on launchy) line. to this test:
+
+    ```rubyonrails
+    scenario "the vendors index page can show the vendors' suyas" do
+      jeff = Vendor.create(name: "jeff")
+      ikem = Vendor.create(name: "ikem")
+      jeff.suyas << Suya.create(meat: "beef", spicy: false, price: 400)
+      jeff.suyas << Suya.create(meat: "ram", spicy: true, price: 410)
+      ikem.suyas << Suya.create(meat: "beef", spicy: true, price: 200)
+      ikem.suyas << Suya.create(meat: "liver", spicy: true, price: 210)
+      ikem.suyas << Suya.create(meat: "ram", spicy: false, price: 220)
+
+      visit vendors_path
+
+      save_and_open_page
+
+      within("div.vendor", text: "jeff") do
+        expect(page).to have_selector("li.suyas", count:2)
+      end
+      within("div.vendor", text: "ikem") do
+        expect(page).to have_selector("li.suyas", count:3)
+      end
+      expect(page).to have_selector("li.suyas", count: 5)
+    end
+    ```
+
+    Be sure to add save_and_open_page after the visit method otherwise there will be no page to open.
+
+    Run your tests and a page should open and you should be able to see your page at that point in the test (you should see 2 vendors and 5 suya list items.)
+
 #### Recap
 
-    We learned how to:
-    1) Start with a Capybara feature/integration test to drive our development.
-    2) Drop down to lower level tests when we encounter small problems in our high-level test. In this instance, we needed to create models and associations, both of which required their own tests before we could continue our high-level test.
-    3) Create models using generators, and validations.
-    4) Use RSpec.
-    
-    If there are any bugs to this tutorial, feel free to contact:
-    [Jeffrey Wan](https://www.linkedin.com/pub/jeffrey-wan/18/23/a1b)
+We learned how to:
+
+1. Start with a Capybara feature/integration test to drive our development.
+2. Drop down to lower level tests when we encounter small problems in our high-level test. In this instance, we needed to create models and associations, both of which required their own tests before we could continue our high-level test.
+3. Create models using generators, and validations.
+4. Use RSpec.
+5. Use Launchy and save_and_open_page.
+
+If there are any bugs to this tutorial, feel free to contact:
+[Jeffrey Wan](https://www.linkedin.com/pub/jeffrey-wan/18/23/a1b)
