@@ -32,6 +32,7 @@ RSpec.feature "Vendors", type: :feature do
     within("div.vendor", text: "ikem") do
       expect(page).to have_selector("li.suyas", count:3)
     end
+
     expect(page).to have_selector("li.suyas", count: 5)
   end
 end

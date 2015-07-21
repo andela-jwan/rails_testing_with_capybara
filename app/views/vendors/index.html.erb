@@ -3,7 +3,7 @@
 <div class="vendors">
   <% @vendors.each do |vendor| %>
     <div class="vendor">
-      <%= vendor.name %>
+      <p>Vendor name: <%= vendor.name %></p>
       <% vendor.suyas.each do |suya| %>
         <li class="suyas"> I sell <%= suya.meat %> which costs <%= suya.price %>. Spicy: <%= suya.spicy %> %></li>
       <% end %>
