@@ -59,7 +59,7 @@ Things you should do after this tutorial with a pair:
        Unable to find button "Register New Vendor"
     ```
 
-    So let's change the top of our index.html.erb to:
+    So let's change the top of our app/views/vendors/index.html.erb to:
 
     ```html
     <h1> Vendors And Their Suyas</h1>
@@ -83,7 +83,7 @@ Things you should do after this tutorial with a pair:
     ```Bash
     Failure/Error: visit vendors_path
      ActionView::Template::Error:
-       undefined local variable or method `new_vendors_path' for #<#<Class:0x007fc94d15da88>:0x007fc951a77ae8>
+       undefined local variable or method `new_vendor_path' for #<#<Class:0x007fc94d15da88>:0x007fc951a77ae8>
     ```
 
     Let's delete our old route and replace it with:
@@ -94,7 +94,7 @@ Things you should do after this tutorial with a pair:
     end
     ```
 
-    Run rake routes:
+    Run __rake routes__ in your terminal and you should see:
 
     ```Bash
         Prefix Verb   URI Pattern                 Controller#Action
@@ -108,7 +108,7 @@ Things you should do after this tutorial with a pair:
                 DELETE /vendors/:id(.:format)      vendors#destroy
     ```
 
-    In the above routes for example, the new_vendor_path is a GET request that take you to the /vendors/new url and hits the new action in the vendors controller (or the new instance method in the vendors controller).
+    In the above routes for example, the new_vendor_path is a GET request that takes you to the /vendors/new url and hits the new action in the vendors controller (or the #new instance method in the vendors controller).
 
     Rerun tests. Our error:
 
@@ -152,7 +152,7 @@ Things you should do after this tutorial with a pair:
     end
     ```
 
-    Rerun tests. I'll explain why I put @vendor in our action shortly. Our "new"...heh... error...get it?:
+    Rerun tests. I'll explain why I put @vendor in our action shortly. Our "new" error...GET IT?:
 
     ```Bash
     Failure/Error: click_link "Register New Vendor"
@@ -160,9 +160,9 @@ Things you should do after this tutorial with a pair:
        Missing template vendors/new...
     ```
 
-    In short, we need a vendors/new template.
+    The error message is telling us that we're foolish and we're missing a template. We need a vendors/new template.
 
-    Create a new.html.erb template inside app/views/vendors.
+    Create a new.html.erb template inside app/views/vendors. Just create the file by hand in your text editor.
 
     Rerun tests. Our new error:
 
@@ -183,10 +183,10 @@ Things you should do after this tutorial with a pair:
     <% end %>
     ```
 
-    In the form_for, Rails is smart enough to check the variable inside the form_for argument. It can take either a symbol or an instance variable. If we pass it an instance variable, it checks whether this instance variable has an ID or not. If it does not (like in this case), it knows that we are using a new form and will redirect to the create action of the vendorsController. If it does have an ID, it would redirect to the update action of the VendorsController.
+    In the form_for ([rails helper](http://api.rubyonrails.org/classes/ActionView/Helpers/FormHelper.html#method-i-form_for)), Rails is smart enough to check the variable inside the form_for argument. It can take either a symbol or an instance variable. If we pass it an instance variable, it checks whether this instance variable has an ID or not. If it does not (like in this case), it knows that we are using a new form and will redirect to the create action of the vendorsController when we hit the submit button. If it does have an ID, it would redirect to the update action of the VendorsController. In this case, we will be redirected to the create action of the VendorsController after we hit submit.
 
     From this [link](http://apidock.com/rails/ActionView/Helpers/FormHelper/form_for):
-    > In the examples just shown, although not indicated explicitly, we still need to use the :url option in order to specify where the form is going to be sent. However, further simplification is possible if the record passed to form_for is a resource, i.e. it corresponds to a set of RESTful routes, e.g. defined using the resources method in config/routes.rb. In this case Rails will simply infer the appropriate URL from the record itself. For example,
+    > In the examples just shown, although not indicated explicitly, we still need to use the :url option in order to specify where the form is going to be sent. However, further simplification is possible if the record passed to form_for is a resource, i.e. it corresponds to a set of RESTful routes, e.g. defined using the resources method in config/routes.rb. In this case Rails will simply infer the appropriate URL from the record itself.
 
     If we rerun tests, we get this error:
 
@@ -214,6 +214,21 @@ Things you should do after this tutorial with a pair:
     expect(page).to have_selector('input[placeholder="ex: Jeff"]')
     ```
 
+    This is what our test looks like now:
+
+    ```rubyonrails
+    scenario "a user can visit the vendors index page and click on a button to get to the new vendors form" do
+      visit vendors_path
+      click_link "Register New Vendor"
+
+      expect(current_path).to eql(new_vendor_path)
+      expect(page).to have_selector("h1.new_vendor_header", text: "New Vendor Form")
+
+      expect(page).to have_selector('input[placeholder="ex: Jeff"]')
+      expect(page).to have_button("Submit")
+    end
+    ```
+
     Rerun tests and they pass now.
 
 3. Let's write another feature test that tests creation of a Vendor.
@@ -228,7 +243,7 @@ Things you should do after this tutorial with a pair:
     expect(page).to have_selector("div.vendor", text: "Vendor name: Jeff2")
     ```
 
-    In summary, when we visit the new page, and fill in the form, and submit it, we should be redirected back to the vendors index page and see our new vendor.
+    In summary, when we visit the new page, and fill in the form, and submit it, we should be redirected back to the vendors index page and see our new vendor in its own div tag.
 
     Run our tests. Our error:
 
@@ -255,9 +270,9 @@ Things you should do after this tutorial with a pair:
          * "/Users/Jwan/Dropbox/programming/andela/capybara_rails_tutorial/app/views"
     ```
 
-    So this test is a bit misleading. We don't want to render a create template but Rails automatically assumes we want to render a template with the name of the Controller action when we don't explicitly specify a redirect. in this action, what we want is to create a new Vendor and redirect back to the vendors/index or vendors_path with a flash message stating that our new Vendor was created. Cool right?
+    So this message is a bit misleading. We don't want to render a create template but Rails automatically assumes we want to render a template with the name of the Controller action when we don't explicitly specify a redirect. In this action, what we want ideally is to create a new Vendor and redirect back to the vendors/index or vendors_path with a flash message stating that our new Vendor was created. Cool right?
 
-    Let's write our create action. Let's first see what our params hash looks like from the rails form that was sent in.
+    Before we write our create action, let's first see what our params hash looks like from the rails form that was sent in.
 
     ```rails
     def create
@@ -276,6 +291,10 @@ Things you should do after this tutorial with a pair:
         => {"utf8"=>"✓", "vendor"=>{"name"=>"Jeff2"}, "commit"=>"Submit", "controller"=>"vendors", "action"=>"create"}
     ```
 
+    [params](http://guides.rubyonrails.org/action_controller_overview.html#parameters)
+
+    > The second type of parameter is usually referred to as POST data. This information usually comes from an HTML form which has been filled in by the user. It's called POST data because it can only be sent as part of an HTTP POST request. Rails does not make any distinction between query string parameters and POST parameters, and both are available in the params hash in your controller:
+
     Let's build [strong params] (http://edgeguides.rubyonrails.org/action_controller_overview.html#strong-parameters).
 
     Create a private method in our vendorsController:
@@ -288,7 +307,7 @@ Things you should do after this tutorial with a pair:
     end
     ```
 
-    This says that our params variable in our controller needs to have the :vendor symbol (it does... params hashes are special in that you can access string variables with symbols.) and that the only fields it permits are the :name field. This prevents modification of sensitive attributes (imagine an Admin attribute that was modifiable to anyboyd... we wouldn't want that would we?)
+    This says that our params variable in our controller needs to have the :vendor symbol (it does... Even though it looks like our params hashes are all strings, params hashes are special in that you can access string variables with symbols.) and that the only fields it permits are the :name field. This prevents modification of sensitive attributes (imagine an Admin attribute that was modifiable to anyboyd... we wouldn't want that would we?)
 
     This will be our create action:
 
@@ -320,7 +339,7 @@ Things you should do after this tutorial with a pair:
 
     So redirect_to will again request a URL, hit the controller, and render a view.
 
-    Let's go over this create action. We create a new Vendor (it builds the object but it does not save it to the database). If you were to insert a require "pry"; binding.pry after the first line... you would see that:
+    Let's go over this create action. We create a new Vendor (it builds the object but it does not save it to the database). If you were to insert a require "pry"; binding.pry after the first line and type in vendor and hit enter... you would see this:
 
     ```Bash
       10: def create
@@ -368,7 +387,7 @@ Things you should do after this tutorial with a pair:
 
     But, we have a flash message set in our controller but nothing in our HTML to display the actual flash message. Let's fix our error.
 
-    Add this flash message div to our application.html.erb. We'll use a content tag to create a div and a message.
+    Add this flash message div to our **/app/views/layouts/application.html.erb**. We'll use a content tag to create a div and a message.
 
     ```rubyonrails
     <% flash.each do |name, msg| %>
@@ -376,12 +395,12 @@ Things you should do after this tutorial with a pair:
     <% end %>
     ```
 
-    Rerun our tests and they should pass.
+    This code should be inserted right under the body tag and above the yield command. Rerun our tests and they should pass.
 
 
 4. Style our content tag. We gave the flash message a class that dynamically changes based on what the flash name is. Let's create a flash.scss in our app/stylesheets folder.
 
-    Add this code to flash.scss:
+    Add this code to **app/assets/stylesheets/flash.scss** (you need to create this file):
 
     ```rubyonrails
     .flash-notice {
@@ -392,3 +411,7 @@ Things you should do after this tutorial with a pair:
       color: #E23083
     }
     ```
+
+    Look up color codes here: [Color codes](http://www.rapidtables.com/web/color/RGB_Color.htm)
+
+5. Great job! Finish up the other restful routes. Create a show page test, an update test, and a delete test yourself. Start with the feature tests!
