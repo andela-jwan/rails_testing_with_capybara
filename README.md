@@ -296,7 +296,7 @@ Once again we'll be doing high-level integration/feature tests and dropping down
         redirect_to vendors_path, notice: "Vendor Created"
       else
         @vendor = Vendor.new
-        flash.now[:error] = vendor.errors.full_messages.join(", ")
+        flash.now[:alert] = vendor.errors.full_messages.join(", ")
         render :new
       end
     end
@@ -327,7 +327,7 @@ Once again we'll be doing high-level integration/feature tests and dropping down
       14:     redirect_to vendors_path, notice: "Vendor Created"
       15:   else
       16:     @vendor = Vendor.new
-      17:     flash.now[:error] = vendor.errors.full_messages.join(", ")
+      17:     flash.now[:alert] = vendor.errors.full_messages.join(", ")
       18:     render :new
       19:   end
       20: end
@@ -374,3 +374,18 @@ Once again we'll be doing high-level integration/feature tests and dropping down
     ```
 
     Rerun our tests and they should pass.
+
+
+4. Style our content tag. We gave the flash message a class that dynamically changes based on what the flash name is. Let's create a flash.scss in our app/stylesheets folder.
+
+    Add this code to flash.scss:
+
+    ```rubyonrails
+    .flash-notice {
+      color: #3CE230
+    }
+
+    .flash-alert {
+      color: #E23083
+    }
+    ```
