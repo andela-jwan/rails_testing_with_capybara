@@ -1,33 +1,36 @@
 ## Advanced capybara testing.
 
-Let's do some more testing! Hurray!
+Let's do some more testing and TDD with Capybara! Hurray!
 
 Once again we'll be doing high-level integration/feature tests and dropping down to the unit/model level when needed. This will be shorter. We'll work on:
 
 1. New Vendor forms
-2. New Suya forms
-3. Vendor Show page.
-4. Vendor updating
-5. Vendor and Suya deleting.
+2. Creating a new Vendor.
+
+Things you should do after this tutorial with a pair:
+3. New Suya forms
+4. Vendor Show page.
+5. Vendor updating
+6. Vendor and Suya deleting.
 
 #### Let's begin.
 
-1. git clone this repo since I made a few quick styling changes to the html/css and integrated bootstrap.
+1. Git clone this repo since I made a few quick styling changes to the html/css and integrated bootstrap.
 
 2. Let's write a high-level test for a new vendor form.
 
     Again, we haven't written any new forms yet, or a buttons for the new form, or any messages or any html. We're going to be writing a test first, which is sort of like our dream scenario of what we want our app to act like/be like. Our test will drive our development.
 
-    Let's create another test file and separate this new vendor spec from our vendor index specs.
+    Let's create another test file and separate this new vendor spec from our vendors_spec.rb. However, this new file will still be in the features folder.
 
     ```Bash
     rails g rspec:feature new_vendor
     ```
 
-    Inside the spec/features/new_vendors_spec.rb file, lets' write our high level test. Let's think about what we want to happen. Our story:
+    Inside the **spec/features/new_vendors_spec.rb** file, lets' write our high level test. Let's think about what we want to happen. Our story:
 
-    1. As a visitor, when I visit the vendors_path and click on a "Register New Vendor"
-    2. I can be redirected to a new vendors form that has a "New Vendor Form" heading, and an input box for a name, and a submit button.
+    - As a visitor, when I visit the vendors_path and click on a "Register New Vendor"
+    - I can be redirected to a new vendors form that has a "New Vendor Form" heading, and an input box for a name, and a submit button.
 
     ```rubyonrails
     scenario "a user can visit the vendors index page and click on a button to get to the new vendors form" do
