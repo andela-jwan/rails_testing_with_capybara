@@ -231,16 +231,16 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
 
     ```Bash
     Vendors the vendors index page can show all of the vendors
-     Failure/Error: expect(page).to have_content("jeff")
-       expected to find text "jeff" in "Vendors#index Find me in app/views/vendors/index.html.erb"
+     Failure/Error: expect(page).to have_selector("h1", text: "Vendors And Their Suyas")
+       expected to find css "h1" with text "Vendors And Their Suyas" but there were no matches. Also found "Vendors#index",        which matched the selector but not all filters.
     ```
 
     So, if we strictly followed TDD, we could just make our app/views/vendors/index.html.erb read just this:
 
     ```rubyonrails
-    <p>
-      jeff
-    </p>
+    <h1>
+      Vendors And Their Suyas
+    </h1>
     ```
 
     But let's make a more dynamic template:
