@@ -169,9 +169,13 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
     end
     ```
 
+    Run the test and it should fail. We don't have a Vendor model. Let's correct the error by creating a model.
+
     ```Bash
     rails g model Vendor name:string
     ```
+
+    Do not overwrite the test! We created the test first as per TDD patterns. Just hit "n" when asked to overwrite the test.
 
     Then migrate our database (since that generator creates a migration. From here on out, migrating means to run this command:)
 
@@ -269,12 +273,13 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
 
       <div class="vendors">
         <% @vendors.each do |vendor| %>
-          <p class="vendor"><%= vendor.name %></p>
+          <div class="vendor"><%= vendor.name %></div>
         <% end %>
       </div>
     ```
     Rerun your tests and now all tests should now pass. Hurray!
 
+    #### Read your RSpec error messages practice.
     If you want to see Rspec error messages, change your first expectation in the feature test and singularize "Vendors" to create a failure:
 
     ```rubyonrails
