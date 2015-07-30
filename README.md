@@ -437,9 +437,9 @@ These are methods you'll be using in your rspec feature tests w/ Capybara.
       suya3 = Suya.create(meat: "beef", spicy: false)
       suya4 = Suya.create(meat: "beef", spicy: true)
 
-      expect(suya1.invalid?).to be_invalid?
+      expect(suya1).to be_invalid
       expect(suya3).to be_valid
-      expect(suya3).to be_valid
+      expect(suya4).to be_valid
     end
 
     it "is invalid without a price which is an integer" do
